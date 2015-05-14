@@ -287,21 +287,21 @@ configure_mysql() {
     /etc/init.d/mysql $MYSQLSTARTUP
     if [ $MYSQLSTARTUP == "bootstrap-pxc" ];
     then
-	    # if there is an active node in cluster already, don't run this code
-		IPS='10.0.1.5 10.0.1.6 10.0.1.7'
-		FOUNDONE='FALSE'
+        # if there is an active node in cluster already, don't run this code
+        IPS='10.0.1.5 10.0.1.6 10.0.1.7'
+        FOUNDONE='FALSE'
 
-		for IP_ADDRESS in ${IPS}; do
-		   echo "Test for ${IP_ADDRESS}"
-		   if ping -c 2 ${IP_ADDRESS} > /dev/null
-		   then
-				echo  'found a good one'
-				FOUNDONE='TRUE'
-				break
-		   fi
-		done
-		if [ $FOUNDONE == 'FALSE' ];
-		then
+        for IP_ADDRESS in ${IPS}; do
+           echo "Test for ${IP_ADDRESS}"
+           if ping -c 2 ${IP_ADDRESS} > /dev/null
+           then
+                echo  'found a good one'
+                FOUNDONE='TRUE'
+                break
+           fi
+        done
+        if [ $FOUNDONE == 'FALSE' ];
+        then
             if [ $sstmethod != "mysqldump" ];
             then
                 echo "CREATE USER '${sstauth[0]}'@'localhost' IDENTIFIED BY '${sstauth[1]}';" > /tmp/bootstrap-pxc.sql
