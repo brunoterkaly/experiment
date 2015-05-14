@@ -297,11 +297,13 @@ configure_mysql() {
            then
                 echo  'found a good one'
                 FOUNDONE='TRUE'
+                echo "Found a valid IP" >> /tmp/mysqldump-pxc.sql
                 break
            fi
         done
         if [ $FOUNDONE == 'FALSE' ];
         then
+            echo "Did not find  a valid IP" >> /tmp/mysqldump-pxc.sql
             if [ $sstmethod != "mysqldump" ];
             then
                 echo "CREATE USER '${sstauth[0]}'@'localhost' IDENTIFIED BY '${sstauth[1]}';" > /tmp/bootstrap-pxc.sql
@@ -313,10 +315,10 @@ configure_mysql() {
             echo "GRANT select on *.* to 'test'@'%';" >> /tmp/bootstrap-pxc.sql
             echo "FLUSH PRIVILEGES;" >> /tmp/bootstrap-pxc.sql
             mysql < /tmp/bootstrap-pxc.sql
-                    echo 'never found a good one'
-            else
-                      echo 'did find a good one'
-            fi
+            echo 'never found a good one' >> /tmp/mysqldump-pxc.sql
+        else
+            echo 'did find a good one' >> /tmp/mysqldump-pxc.sql
+        fi
     fi
 }
 
