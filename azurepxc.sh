@@ -288,30 +288,35 @@ configure_mysql() {
     if [ $MYSQLSTARTUP == "bootstrap-pxc" ];
     then
 	    # if there is an active node in cluster already, don't run this code
-        IPS='10.0.1.5 10.0.1.6 10.0.1.7'
-        
-        for IP_ADDRESS in ${IPS}; do
-           echo "Test for ${IP_ADDRESS}"
-           if ping -c 2 ${IP_ADDRESS} > /dev/null
-           then
-                echo  'found a good one'
-                exit 1
-           fi
-        done
-        echo 'never found a good one'
+		IPS='10.0.1.5 10.0.1.6 10.0.1.7'
+		FOUNDONE='FALSE'
 
-
-        if [ $sstmethod != "mysqldump" ];
-        then
-            echo "CREATE USER '${sstauth[0]}'@'localhost' IDENTIFIED BY '${sstauth[1]}';" > /tmp/bootstrap-pxc.sql
-            echo "GRANT RELOAD, LOCK TABLES, REPLICATION CLIENT ON *.* TO '${sstauth[0]}'@'localhost';" >> /tmp/bootstrap-pxc.sql
-        fi
-        echo "CREATE USER '$CLUSTERUSER'@'localhost' identified by '$CLUSTERPASSWORD';" >> /tmp/bootstrap-pxc.sql
-        echo "GRANT PROCESS on *.* to 'clustercheckuser'@'localhost';" >> /tmp/bootstrap-pxc.sql
-        echo "CREATE USER 'test'@'%' identified by '${sstauth[1]}';" >> /tmp/bootstrap-pxc.sql
-        echo "GRANT select on *.* to 'test'@'%';" >> /tmp/bootstrap-pxc.sql
-        echo "FLUSH PRIVILEGES;" >> /tmp/bootstrap-pxc.sql
-        mysql < /tmp/bootstrap-pxc.sql
+		for IP_ADDRESS in ${IPS}; do
+		   echo "Test for ${IP_ADDRESS}"
+		   if ping -c 2 ${IP_ADDRESS} > /dev/null
+		   then
+				echo  'found a good one'
+				FOUNDONE='TRUE'
+				break
+		   fi
+		done
+		if [ $FOUNDONE == 'FALSE' ];
+		then
+            if [ $sstmethod != "mysqldump" ];
+            then
+                echo "CREATE USER '${sstauth[0]}'@'localhost' IDENTIFIED BY '${sstauth[1]}';" > /tmp/bootstrap-pxc.sql
+                echo "GRANT RELOAD, LOCK TABLES, REPLICATION CLIENT ON *.* TO '${sstauth[0]}'@'localhost';" >> /tmp/bootstrap-pxc.sql
+            fi
+            echo "CREATE USER '$CLUSTERUSER'@'localhost' identified by '$CLUSTERPASSWORD';" >> /tmp/bootstrap-pxc.sql
+            echo "GRANT PROCESS on *.* to 'clustercheckuser'@'localhost';" >> /tmp/bootstrap-pxc.sql
+            echo "CREATE USER 'test'@'%' identified by '${sstauth[1]}';" >> /tmp/bootstrap-pxc.sql
+            echo "GRANT select on *.* to 'test'@'%';" >> /tmp/bootstrap-pxc.sql
+            echo "FLUSH PRIVILEGES;" >> /tmp/bootstrap-pxc.sql
+            mysql < /tmp/bootstrap-pxc.sql
+    		  echo 'never found a good one'
+    	else
+    		  echo 'did find a good one'
+    	fi
     fi
 }
 
