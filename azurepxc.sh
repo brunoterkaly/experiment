@@ -313,22 +313,22 @@ configure_mysql() {
             echo "GRANT select on *.* to 'test'@'%';" >> /tmp/bootstrap-pxc.sql
             echo "FLUSH PRIVILEGES;" >> /tmp/bootstrap-pxc.sql
             mysql < /tmp/bootstrap-pxc.sql
-    		echo 'never found a good one'
-    	else
-    		  echo 'did find a good one'
-    	fi
+                    echo 'never found a good one'
+            else
+                      echo 'did find a good one'
+            fi
     fi
 }
 
 allow_passwordssh() {
-	grep -q '^PasswordAuthentication yes' /etc/ssh/sshd_config
+        grep -q '^PasswordAuthentication yes' /etc/ssh/sshd_config
     if [ ${?} -eq 0 ];
     then
-		return
-	fi
+                return
+        fi
     sed -i "s/^#PasswordAuthentication.*/PasswordAuthentication yes/I" /etc/ssh/sshd_config
     sed -i "s/^PasswordAuthentication no.*/PasswordAuthentication yes/I" /etc/ssh/sshd_config
-	/etc/init.d/sshd reload
+        /etc/init.d/sshd reload
 }
 
 # temporary workaround form CRP 
