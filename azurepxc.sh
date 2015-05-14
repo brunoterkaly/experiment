@@ -313,7 +313,7 @@ configure_mysql() {
             echo "GRANT select on *.* to 'test'@'%';" >> /tmp/bootstrap-pxc.sql
             echo "FLUSH PRIVILEGES;" >> /tmp/bootstrap-pxc.sql
             mysql < /tmp/bootstrap-pxc.sql
-    		  echo 'never found a good one'
+    		echo 'never found a good one'
     	else
     		  echo 'did find a good one'
     	fi
